@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  owner
+  admin
+  member
+}
+
+model Org {
+  id          String          @id @default(uuid())
+  name        String
+  createdAt   DateTime        @default(now())
+  memberships OrgMembership[]
+
+  @@map("orgs")
+}
+
+model User {
+  id           String          @id @default(uuid())
+  email        String          @unique
+  passwordHash String
+  createdAt    DateTime        @default(now())
+  memberships  OrgMembership[]
+
+  @@map("users")
+}
+
+model OrgMembership {
+  userId    String
+  orgId     String
+  role      Role
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org  Org  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@id([userId, orgId])
+  @@index([orgId])
+  @@index([userId])
+  @@map("org_memberships")
+}
