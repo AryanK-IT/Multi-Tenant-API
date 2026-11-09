@@ -74,6 +74,13 @@ export function errorHandler(
   const requestId = req.id || "req_unknown";
   const { statusCode, envelope } = formatErrorEnvelope(err, requestId);
 
+  if (err instanceof AppError && statusCode === 429 && "retryAfterSeconds" in err) {
+    const retryAfter = (err as { retryAfterSeconds?: number }).retryAfterSeconds;
+    if (retryAfter !== undefined && !res.getHeader("Retry-After")) {
+      res.setHeader("Retry-After", String(retryAfter));
+    }
+  }
+
   const reqLogger = req.log || logger;
   if (statusCode >= 500) {
     reqLogger.error({ err, statusCode, envelope }, "Unhandled error encountered");

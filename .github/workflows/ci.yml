@@ -75,3 +75,9 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Build TypeScript distribution
+        run: npm run build
+
+      - name: Verify Docker build
+        run: docker build -t taskflow-api:test .

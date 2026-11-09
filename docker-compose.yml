@@ -31,6 +31,36 @@ services:
       timeout: 5s
       retries: 5
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskflow-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://taskflow:taskflow_dev_secret@postgres:5432/taskflow_dev?schema=public
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: 012345678901234567890123456789012
+      JWT_ACCESS_EXPIRATION: 15m
+      JWT_REFRESH_SECRET: 012345678901234567890123456789012
+      JWT_REFRESH_EXPIRATION_DAYS: 7
+      WEBHOOK_ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      LOG_LEVEL: info
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
 volumes:
   pgdata:
   redisdata:

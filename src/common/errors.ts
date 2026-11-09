@@ -61,6 +61,12 @@ export class RateLimitedError extends AppError {
   }
 }
 
+export class ServiceUnavailableError extends AppError {
+  constructor(message = "Service temporarily unavailable. Please try again later.") {
+    super(503, "SERVICE_UNAVAILABLE", message);
+  }
+}
+
 export class InternalServerError extends AppError {
   constructor(message = "An unexpected error occurred.") {
     super(500, "INTERNAL_SERVER_ERROR", message);
