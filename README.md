@@ -13,3 +13,5 @@ Currently under active development according to the Software Requirements Specif
 - Rotating JWT authentication with refresh token reuse detection.
 - Event-driven webhook delivery with HMAC-SHA256 signatures and SSRF safeguards.
 - Append-only audit logging and Redis-backed rate limiting.
+
+# Multi-Tenant-API
